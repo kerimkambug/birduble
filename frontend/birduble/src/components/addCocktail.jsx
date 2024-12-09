@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "../styles/addCocktail.css";
+import "../styles/addcocktail.css";
 
 function AddCocktail() {
     const [cocktailName, setCocktailName] = useState("");
