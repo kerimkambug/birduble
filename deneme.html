@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cocktail App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 60%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2,
+        h3 {
+            text-align: center;
+        }
+
+        input,
+        button,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 5px;
+            background-color: #f1f1f1;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Cocktail App</h1>
+
+        <!-- Authentication Section -->
+        <div id="authSection">
+            <h2>Login / Register</h2>
+            <div>
+                <label>Email</label>
+                <input type="email" id="email" placeholder="Email">
+            </div>
+            <div>
+                <label>Password</label>
+                <input type="password" id="password" placeholder="Password">
+            </div>
+            <button onclick="login()">Login</button>
+            <button onclick="register()">Register</button>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profileSection" style="display:none;">
+            <h2>Welcome <span id="username"></span></h2>
+            <button onclick="logout()">Logout</button>
+
+            <!-- Add Ingredients -->
+            <h3>Your Ingredients</h3>
+            <input type="text" id="ingredient" placeholder="Add Ingredient">
+            <button onclick="addIngredient()">Add Ingredient</button>
+
+            <!-- Ingredients List -->
+            <ul id="ingredientList"></ul>
+
+            <!-- Available Cocktails -->
+            <h3>Your Available Cocktails</h3>
+            <ul id="cocktailList"></ul>
+
+            <!-- Add Cocktail -->
+            <h3>Add a Cocktail</h3>
+            <input type="text" id="cocktailName" placeholder="Cocktail Name">
+            <textarea id="cocktailRecipe" placeholder="Cocktail Recipe"></textarea>
+            <button onclick="addCocktail()">Add Cocktail</button>
+        </div>
+    </div>
+
+    <script>
+        let token = ''; // Token to store logged in user's JWT
+
+        // Login function
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('http://localhost:8080/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                token = data.token;
+                localStorage.setItem('token', token); // Store token in localStorage
+                alert('Login successful');
+                loadProfile();
+            } else {
+                alert('Login failed: ' + data.message);
+            }
+        }
+
+        // Register function
+        async function register() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const response = await fetch('http://localhost:8080/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Registration successful');
+            } else {
+                alert('Registration failed: ' + data.message);
+            }
+        }
+
+        // Load profile data
+        async function loadProfile() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const response = await fetch('http://localhost:8080/api/auth/profile', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById('username').innerText = data.data.username;
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('profileSection').style.display = 'block';
+                loadIngredients();
+                loadCocktails();
+            } else {
+                alert('Error loading profile: ' + data.message);
+            }
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.reload();
+        }
+
+        // Add ingredient
+        async function addIngredient() {
+            const ingredient = document.getElementById('ingredient').value;
+            const token = localStorage.getItem('token');
+
+            const response = await fetch('http://localhost:8080/api/auth/addIngredient', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ ingredient }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Ingredient added');
+                loadIngredients();
+            } else {
+                alert('Error adding ingredient: ' + data.message);
+            }
+        }
+
+        // Load ingredients
+        async function loadIngredients() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const response = await fetch('http://localhost:8080/api/auth/getIngredients', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                const ingredientList = document.getElementById('ingredientList');
+                ingredientList.innerHTML = '';
+                data.data.forEach(ingredient => {
+                    const li = document.createElement('li');
+                    li.innerText = ingredient;
+                    ingredientList.appendChild(li);
+                });
+            } else {
+                alert('Error loading ingredients: ' + data.message);
+            }
+        }
+
+        // Load cocktails based on available ingredients
+        async function loadCocktails() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            const response = await fetch('http://localhost:8080/api/auth/getAvailableCocktails', {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                const cocktailList = document.getElementById('cocktailList');
+                cocktailList.innerHTML = '';
+                data.data.forEach(cocktail => {
+                    const li = document.createElement('li');
+                    li.innerText = cocktail.name;
+                    cocktailList.appendChild(li);
+                });
+            } else {
+                alert('Error loading cocktails: ' + data.message);
+            }
+        }
+
+        // Add cocktail
+        async function addCocktail() {
+            const cocktailName = document.getElementById('cocktailName').value;
+            const cocktailRecipe = document.getElementById('cocktailRecipe').value;
+            const token = localStorage.getItem('token');
+
+            const response = await fetch('http://localhost:8080/api/cocktail/addcocktail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({ name: cocktailName, recipe: cocktailRecipe }),
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                alert('Cocktail added');
+                loadCocktails();
+            } else {
+                alert('Error adding cocktail: ' + data.message);
+            }
+        }
+    </script>
+</body>
+
+</html>

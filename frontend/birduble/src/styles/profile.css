@@ -1,0 +1,137 @@
+/* Profil sayfası genel stil */
+.profile-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #f4f7f6;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+/* Profil başlık */
+h2 {
+    font-size: 32px;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Kullanıcı bilgileri */
+.profile-info {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 40px;
+}
+
+.profile-info p {
+    font-size: 18px;
+    color: #555;
+    margin: 12px 0;
+}
+
+.profile-info strong {
+    color: #2c3e50;
+}
+
+/* Kategori başlıkları */
+h3 {
+    font-size: 24px;
+    color: #34495e;
+    margin-top: 30px;
+    border-bottom: 2px solid #ecf0f1;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Malzemeler için liste düzeni */
+.ingredient-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* Kilermenu kartı stil */
+.kilermenu-card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.07);
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.kilermenu-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #6c5ce7, #00cec9);
+    opacity: 0.2;
+    transition: opacity 0.3s ease;
+}
+
+.kilermenu-card:hover::before {
+    opacity: 0.4;
+}
+
+.kilermenu-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.kilermenu-card p {
+    font-size: 16px;
+    color: #7f8c8d;
+    margin-top: 10px;
+}
+
+/* Loading ve error mesajları */
+.loading,
+.error {
+    font-size: 24px;
+    text-align: center;
+    color: #e74c3c;
+    font-weight: 500;
+    margin-top: 40px;
+}
+
+/* Responsive tasarım */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 25px;
+    }
+
+    .ingredient-list {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .profile-info {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-container {
+        padding: 15px;
+    }
+
+    .ingredient-list {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-info {
+        padding: 15px;
+    }
+}

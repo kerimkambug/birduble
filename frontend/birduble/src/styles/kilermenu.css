@@ -1,0 +1,74 @@
+.kiler-category {
+    margin-bottom: 30px;
+}
+
+.kiler-category h3 {
+    font-size: 1.6rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    letter-spacing: 1px;
+}
+
+.kiler-list {
+    display: flex;
+    flex-wrap: wrap;
+    /* Satır sonuna geldiğinde öğelerin alt satıra geçmesini sağlar */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 10px;
+    /* Öğeler arasındaki boşluğu artırır */
+}
+
+.kiler-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+
+}
+
+.kiler-item label {
+    font-size: 1rem;
+    color: #7f8c8d;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 25px;
+    /* Oval şekil */
+    transition: background-color 0.3s, color 0.3s;
+    background-color: #ecf0f1;
+    /* Başlangıçta gri arka plan */
+    width: 100%;
+    /* Label genişliği %100 olacak şekilde ayarlandı */
+    box-sizing: border-box;
+    /* Border ve padding hesaba katılsın */
+}
+
+.kiler-item input[type="checkbox"] {
+    display: none;
+    /* Checkbox'ı gizle */
+}
+
+.kiler-item input[type="checkbox"]:checked+label {
+    background-color: #27ae60;
+    /* Seçili öğe için yeşil arka plan */
+    color: white;
+    /* Seçilen öğede beyaz metin */
+}
+
+.kiler-item label:hover {
+    background-color: #dcdcdc;
+    /* Hover olduğunda gri renk */
+}
+
+.kiler-item span {
+    margin-left: 10px;
+}
+
+.kiler-item input[type="checkbox"]:checked+label span {
+    color: #fff;
+    /* Seçili öğede metin rengi beyaz */
+}

@@ -1,0 +1,84 @@
+/* Genel Ayarlar */
+body {
+    font-family: Arial, sans-serif;
+    margin: 17vh 0px 10vh 0px;
+}
+
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgb(201, 53, 90);
+    z-index: 10;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar.scrolled {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    padding: 5px 15px;
+}
+
+.empty {
+    width: 6vh;
+}
+
+.navbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 20px;
+    transition: padding 0.3s ease;
+}
+
+.navbar.scrolled .navbar-top {
+    padding: 5px 10px;
+}
+
+.profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin: 0px 10px;
+    background-color: #ddd;
+}
+
+.site-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    transition: opacity 0.3s ease;
+}
+
+.searchbox,
+.search-wrapper {
+    width: 90%;
+    max-width: 600px;
+    margin: 10px auto;
+    text-align: center;
+}
+
+.searchbox input,
+.search-wrapper input {
+    width: 90%;
+    max-width: 500px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar.scrolled .search-wrapper {
+    margin: 0;
+    text-align: left;
+    max-width: 300px;
+    flex-grow: 1;
+    display: block;
+}
+
+.navbar.scrolled .site-title {
+    display: none;
+}

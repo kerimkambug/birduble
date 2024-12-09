@@ -1,0 +1,128 @@
+[
+    {
+        "name": "Bellusion",
+        "ingredients": [
+            {
+                "ingredient": "Cin",
+                "category": "alcohol",
+                "amount": "40 ml"
+            },
+            {
+                "ingredient": "Sek versiyon vermut",
+                "category": "alcohol",
+                "amount": "20 ml"
+            },
+            {
+                "ingredient": "Frenk üzümü şurubu",
+                "category": "other",
+                "amount": "10 ml"
+            }
+        ],
+        "recipe": "Cin, vermut ve üzüm şurubunu karıştırıp buzla çalkalayın."
+    },
+    {
+        "name": "Lime bellusion",
+        "ingredients": [
+            {
+                "ingredient": "Cin",
+                "category": "alcohol",
+                "amount": "40 ml"
+            },
+            {
+                "ingredient": "Sek versiyon vermut",
+                "category": "alcohol",
+                "amount": "20 ml"
+            },
+            {
+                "ingredient": "Lime",
+                "category": "vegetable",
+                "amount": "1 lime"
+            }
+        ],
+        "recipe": "Cin, vermut ve lime’ı karıştırıp buzla çalkalayın."
+    },
+    {
+        "name": "Red margarita",
+        "ingredients": [
+            {
+                "ingredient": "Tekila",
+                "category": "alcohol",
+                "amount": "50 ml"
+            },
+            {
+                "ingredient": "Çilek likörü",
+                "category": "alcohol",
+                "amount": "20 ml"
+            },
+            {
+                "ingredient": "Lime",
+                "category": "vegetable",
+                "amount": "1 lime"
+            }
+        ],
+        "recipe": "Tüm malzemeleri shakerda karıştırıp buzla çalkalayın."
+    },
+    {
+        "name": "Blue hawaii",
+        "ingredients": [
+            {
+                "ingredient": "Beyaz rom",
+                "category": "alcohol",
+                "amount": "40 ml"
+            },
+            {
+                "ingredient": "Blue Curacao",
+                "category": "alcohol",
+                "amount": "20 ml"
+            },
+            {
+                "ingredient": "Ananas suyu",
+                "category": "soft",
+                "amount": "60 ml"
+            }
+        ],
+        "recipe": "Rom ve Blue Curacao’yu ananas suyu ile karıştırıp buzla çalkalayın."
+    },
+    {
+        "name": "Fesleğen",
+        "ingredients": [
+            {
+                "ingredient": "Cin",
+                "category": "alcohol",
+                "amount": "50 ml"
+            },
+            {
+                "ingredient": "Fesleğen şurubu",
+                "category": "other",
+                "amount": "15 ml"
+            },
+            {
+                "ingredient": "Lime",
+                "category": "vegetable",
+                "amount": "1/2 lime"
+            }
+        ],
+        "recipe": "Cin ve fesleğen şurubunu lime ile karıştırıp buzla çalkalayın."
+    },
+    {
+        "name": "Mai Thai",
+        "ingredients": [
+            {
+                "ingredient": "Rom",
+                "category": "alcohol",
+                "amount": "40 ml"
+            },
+            {
+                "ingredient": "Şeftali likörü",
+                "category": "alcohol",
+                "amount": "20 ml"
+            },
+            {
+                "ingredient": "Portakal suyu",
+                "category": "soft",
+                "amount": "50 ml"
+            }
+        ],
+        "recipe": "Rom, şeftali likörü ve portakal suyunu karıştırıp buzla çalkalayın."
+    }
+]

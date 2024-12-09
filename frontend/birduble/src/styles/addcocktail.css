@@ -1,0 +1,73 @@
+.add-cocktail {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    font-weight: bold;
+}
+
+.input-group input,
+.input-group textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.ingredients-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.ingredient-item {
+    padding: 8px;
+    cursor: pointer;
+}
+
+.ingredient-item.selected {
+    background-color: #d4edda;
+}
+
+.new-ingredient input {
+    width: 45%;
+    margin-right: 10px;
+}
+
+.new-ingredient button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.new-ingredient button:hover {
+    background-color: #0056b3;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #218838;
+}
+
+.error {
+    color: red;
+    margin-bottom: 16px;
+}
