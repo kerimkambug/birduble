@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "../styles/loginpage.css"; // CSS dosyasını içe aktar
+import "../styles/LoginPage.css"
 
 function LoginPage({ setCurrentPage }) {
     const [email, setEmail] = useState(""); // Kullanıcı e-posta durumu
