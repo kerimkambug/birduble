@@ -3,7 +3,7 @@ import axios from "axios";
 import Kiler from "./components/kilermenu";
 import Navbar from "./components/navbar";
 import Footer from "./components/footer";
-import LoginPage from "./components/loginpage";
+import LoginPage from "./components/LoginPage";
 import ProfilePage from "./components/ProfilePage";
 import AddCocktail from "./components/addCocktail";
 import Cocktail from "./components/cocktail";
