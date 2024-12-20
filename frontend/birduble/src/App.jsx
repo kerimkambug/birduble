@@ -9,6 +9,7 @@ import AddCocktail from "./components/addCocktail";
 import Cocktail from "./components/cocktail";
 import AvailableCocktails from "./components/availablecocktails";
 import LoginRequired from "./components/LoginRequired"; // LoginRequired bileşeni
+const API_URL = "http://mighty-island-53325-296dd28c851f.herokuapp.com"
 
 function App() {
   const [malzemeler, setMalzemeler] = useState([]);
@@ -26,14 +27,14 @@ function App() {
 
         const [ingredientsResponse, cocktailsResponse, profileResponse, availableCocktailsResponse] =
           await Promise.all([
-            axios.get("http://localhost:8080/api/ingredient/getallingredients"),
-            axios.get("http://localhost:8080/api/cocktail/getallcocktails"),
-            axios.get("http://localhost:8080/api/auth/profile", {
+            axios.get(`${API_URL}/api/ingredient/getallingredients`),
+            axios.get(`${API_URL}/api/cocktail/getallcocktails`),
+            axios.get(`${API_URL}/api/auth/profile`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
               },
             }),
-            axios.get("http://localhost:8080/api/auth/getAvailableCocktails", {
+            axios.get(`${API_URL}/api/auth/getAvailableCocktails`, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
               },
@@ -178,6 +179,7 @@ function App() {
     } else if (currentPage === "profile") {
       return (
         <>
+          <AddCocktail />
           <Navbar />
           {loading ? (
             <div>Loading...</div>

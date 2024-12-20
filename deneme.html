@@ -4,275 +4,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cocktail App</title>
+    <title>8 Ball Pool Game</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0b3d0b;
         }
 
-        .container {
-            width: 60%;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1,
-        h2,
-        h3 {
-            text-align: center;
-        }
-
-        input,
-        button,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            padding: 5px;
-            background-color: #f1f1f1;
-            margin: 5px 0;
-            border-radius: 4px;
+        canvas {
+            background-color: #2c6e49;
+            border: 5px solid #8b4513;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1>Cocktail App</h1>
-
-        <!-- Authentication Section -->
-        <div id="authSection">
-            <h2>Login / Register</h2>
-            <div>
-                <label>Email</label>
-                <input type="email" id="email" placeholder="Email">
-            </div>
-            <div>
-                <label>Password</label>
-                <input type="password" id="password" placeholder="Password">
-            </div>
-            <button onclick="login()">Login</button>
-            <button onclick="register()">Register</button>
-        </div>
-
-        <!-- Profile Section -->
-        <div id="profileSection" style="display:none;">
-            <h2>Welcome <span id="username"></span></h2>
-            <button onclick="logout()">Logout</button>
-
-            <!-- Add Ingredients -->
-            <h3>Your Ingredients</h3>
-            <input type="text" id="ingredient" placeholder="Add Ingredient">
-            <button onclick="addIngredient()">Add Ingredient</button>
-
-            <!-- Ingredients List -->
-            <ul id="ingredientList"></ul>
-
-            <!-- Available Cocktails -->
-            <h3>Your Available Cocktails</h3>
-            <ul id="cocktailList"></ul>
-
-            <!-- Add Cocktail -->
-            <h3>Add a Cocktail</h3>
-            <input type="text" id="cocktailName" placeholder="Cocktail Name">
-            <textarea id="cocktailRecipe" placeholder="Cocktail Recipe"></textarea>
-            <button onclick="addCocktail()">Add Cocktail</button>
-        </div>
-    </div>
-
+    <canvas id="billiardTable" width="800" height="400"></canvas>
     <script>
-        let token = ''; // Token to store logged in user's JWT
+        const canvas = document.getElementById("billiardTable");
+        const ctx = canvas.getContext("2d");
 
-        // Login function
-        async function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        const ballRadius = 85;
+        const balls = [];
 
-            const response = await fetch('http://localhost:8080/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+        let cueBall = null;
+        let isDragging = false;
+        let dragStart = null;
+        let dragEnd = null;
 
-            const data = await response.json();
-            if (data.success) {
-                token = data.token;
-                localStorage.setItem('token', token); // Store token in localStorage
-                alert('Login successful');
-                loadProfile();
-            } else {
-                alert('Login failed: ' + data.message);
+        class Ball {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.color = color;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            update() {
+                // Sürtünme kaldırıldı
+                this.x += this.vx;
+                this.y += this.vy;
+
+                // Sürtünme etkisini kaldırdık, hız azalmasın
+                if (Math.abs(this.vx) < 0.1) this.vx = 0;
+                if (Math.abs(this.vy) < 0.1) this.vy = 0;
+
+                // Duvarlara çarpma durumu
+                if (this.x < ballRadius || this.x > canvas.width - ballRadius) {
+                    this.vx *= -1;
+                    this.x = Math.max(ballRadius, Math.min(this.x, canvas.width - ballRadius));
+                }
+
+                if (this.y < ballRadius || this.y > canvas.height - ballRadius) {
+                    this.vy *= -1;
+                    this.y = Math.max(ballRadius, Math.min(this.y, canvas.height - ballRadius));
+                }
+            }
+        }
+        function resolveCollision(ballA, ballB) {
+            const dx = ballB.x - ballA.x;
+            const dy = ballB.y - ballA.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 2 * ballRadius) {
+                const angle = Math.atan2(dy, dx);
+                const sin = Math.sin(angle);
+                const cos = Math.cos(angle);
+
+                const posA = { x: 0, y: 0 };
+                const posB = { x: dx * cos + dy * sin, y: dy * cos - dx * sin };
+
+                const velA = { x: ballA.vx * cos + ballA.vy * sin, y: ballA.vy * cos - ballA.vx * sin };
+                const velB = { x: ballB.vx * cos + ballB.vy * sin, y: ballB.vy * cos - ballB.vx * sin };
+
+                const velocityDiff = velA.x - velB.x;
+                velA.x -= velocityDiff;
+                velB.x += velocityDiff;
+
+                const overlap = 2 * ballRadius - Math.abs(posB.x - posA.x);
+                posA.x -= overlap / 2;
+                posB.x += overlap / 2;
+
+                ballA.x = ballA.x + (posA.x * cos - posA.y * sin);
+                ballA.y = ballA.y + (posA.y * cos + posA.x * sin);
+                ballB.x = ballA.x + (posB.x * cos - posB.y * sin);
+                ballB.y = ballA.y + (posB.y * cos + posB.x * sin);
+
+                ballA.vx = velA.x * cos - velA.y * sin;
+                ballA.vy = velA.y * cos + velA.x * sin;
+                ballB.vx = velB.x * cos - velB.y * sin;
+                ballB.vy = velB.y * cos + velB.x * sin;
+
+                // Her çarpışma sonrası hızın artması
+                ballA.vx *= 1.05; // Hızı %5 arttır
+                ballA.vy *= 1.05;
+                ballB.vx *= 1.05;
+                ballB.vy *= 1.05;
             }
         }
 
-        // Register function
-        async function register() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
 
-            const response = await fetch('http://localhost:8080/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
+        function createBalls() {
+            cueBall = new Ball(canvas.width / 4, canvas.height / 2, "white");
+            balls.push(cueBall);
+
+            const colors = ["yellow", "blue", "red", "purple", "orange", "green", "brown", "black"];
+            let startX = (canvas.width * 3) / 4;
+            let startY = canvas.height / 2;
+            let offset = 0;
+
+            colors.forEach((color, index) => {
+                const x = startX + (index % 2 === 0 ? offset : -offset);
+                const y = startY + index * 2 * ballRadius - (4 * ballRadius);
+                balls.push(new Ball(x, y, color));
+
+                if (index % 2 === 1) offset += ballRadius * 2;
             });
-
-            const data = await response.json();
-            if (data.success) {
-                alert('Registration successful');
-            } else {
-                alert('Registration failed: ' + data.message);
-            }
         }
 
-        // Load profile data
-        async function loadProfile() {
-            const token = localStorage.getItem('token');
-            if (!token) return;
-
-            const response = await fetch('http://localhost:8080/api/auth/profile', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` },
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                document.getElementById('username').innerText = data.data.username;
-                document.getElementById('authSection').style.display = 'none';
-                document.getElementById('profileSection').style.display = 'block';
-                loadIngredients();
-                loadCocktails();
-            } else {
-                alert('Error loading profile: ' + data.message);
-            }
+        function drawTable() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#2c6e49";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        // Logout function
-        function logout() {
-            localStorage.removeItem('token');
-            window.location.reload();
-        }
+        function drawAimLine() {
+            if (isDragging && dragStart && dragEnd) {
+                const dx = dragEnd.x - cueBall.x;
+                const dy = dragEnd.y - cueBall.y;
+                const magnitude = Math.sqrt(dx * dx + dy * dy) / 5;
+                const normalizedDx = dx / magnitude;
+                const normalizedDy = dy / magnitude;
 
-        // Add ingredient
-        async function addIngredient() {
-            const ingredient = document.getElementById('ingredient').value;
-            const token = localStorage.getItem('token');
+                // Simetrik çizgi için hesaplama (topa göre yansıma)
+                const mirroredX = cueBall.x - normalizedDx * 200;  // X ekseninde simetrik
+                const mirroredY = cueBall.y - normalizedDy * 200;  // Y ekseninde simetrik
 
-            const response = await fetch('http://localhost:8080/api/auth/addIngredient', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ ingredient }),
-            });
+                // Çarpma ve yansıma için hesaplama
+                let lineEndX = mirroredX;
+                let lineEndY = mirroredY;
 
-            const data = await response.json();
-            if (data.success) {
-                alert('Ingredient added');
-                loadIngredients();
-            } else {
-                alert('Error adding ingredient: ' + data.message);
-            }
-        }
+                // Toplar arası çarpma ve yansıma hesaplama
+                balls.forEach(ball => {
+                    if (ball !== cueBall) {
+                        const dx = lineEndX - ball.x;
+                        const dy = lineEndY - ball.y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
 
-        // Load ingredients
-        async function loadIngredients() {
-            const token = localStorage.getItem('token');
-            if (!token) return;
+                        // Eğer aim line bir topa çarptıysa
+                        if (distance < ballRadius * 2) {
+                            const angle = Math.atan2(dy, dx);
+                            const lineAngle = Math.atan2(dragEnd.y - cueBall.y, dragEnd.x - cueBall.x);
+                            const reflectionAngle = 2 * angle - lineAngle;
 
-            const response = await fetch('http://localhost:8080/api/auth/getIngredients', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` },
-            });
+                            // Yansıma sonrasındaki yeni aim line'ın son noktası
+                            const reflectionDx = Math.cos(reflectionAngle) * 200;
+                            const reflectionDy = Math.sin(reflectionAngle) * 200;
 
-            const data = await response.json();
-            if (data.success) {
-                const ingredientList = document.getElementById('ingredientList');
-                ingredientList.innerHTML = '';
-                data.data.forEach(ingredient => {
-                    const li = document.createElement('li');
-                    li.innerText = ingredient;
-                    ingredientList.appendChild(li);
+                            lineEndX = ball.x + reflectionDx;
+                            lineEndY = ball.y + reflectionDy;
+                        }
+                    }
                 });
-            } else {
-                alert('Error loading ingredients: ' + data.message);
+
+                // Yansıyan çizgiyi çiz
+                ctx.beginPath();
+                ctx.moveTo(cueBall.x, cueBall.y);
+                ctx.lineTo(lineEndX, lineEndY);
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 3;
+                ctx.setLineDash([10, 10]); // Dashed line
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset line dash
+                ctx.closePath();
             }
         }
 
-        // Load cocktails based on available ingredients
-        async function loadCocktails() {
-            const token = localStorage.getItem('token');
-            if (!token) return;
+        function updateGame() {
+            drawTable();
+            drawAimLine();
+            for (let i = 0; i < balls.length; i++) {
+                for (let j = i + 1; j < balls.length; j++) {
+                    resolveCollision(balls[i], balls[j]);
+                }
+            }
 
-            const response = await fetch('http://localhost:8080/api/auth/getAvailableCocktails', {
-                method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` },
+            balls.forEach(ball => {
+                ball.update();
+                ball.draw();
             });
 
-            const data = await response.json();
-            if (data.success) {
-                const cocktailList = document.getElementById('cocktailList');
-                cocktailList.innerHTML = '';
-                data.data.forEach(cocktail => {
-                    const li = document.createElement('li');
-                    li.innerText = cocktail.name;
-                    cocktailList.appendChild(li);
-                });
-            } else {
-                alert('Error loading cocktails: ' + data.message);
-            }
+            requestAnimationFrame(updateGame);
         }
 
-        // Add cocktail
-        async function addCocktail() {
-            const cocktailName = document.getElementById('cocktailName').value;
-            const cocktailRecipe = document.getElementById('cocktailRecipe').value;
-            const token = localStorage.getItem('token');
+        canvas.addEventListener("mousedown", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-            const response = await fetch('http://localhost:8080/api/cocktail/addcocktail', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ name: cocktailName, recipe: cocktailRecipe }),
-            });
+            const dx = x - cueBall.x;
+            const dy = y - cueBall.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
 
-            const data = await response.json();
-            if (data.success) {
-                alert('Cocktail added');
-                loadCocktails();
-            } else {
-                alert('Error adding cocktail: ' + data.message);
+            if (distance < ballRadius) {
+                isDragging = true;
+                dragStart = { x, y };
             }
-        }
+        });
+
+        canvas.addEventListener("mousemove", (e) => {
+            if (!isDragging) return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            dragEnd = { x, y };
+        });
+
+        canvas.addEventListener("mouseup", (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const dx = cueBall.x - x;
+            const dy = cueBall.y - y;
+            cueBall.vx = dx * 0.2;
+            cueBall.vy = dy * 0.2;
+
+            dragStart = null;
+            dragEnd = null;
+        });
+
+        createBalls();
+        updateGame();
     </script>
 </body>
 

@@ -49,6 +49,7 @@ function Navbar() {
                             onChange={handleSearchChange}
                         />
                     </div>
+
                 )}
             </div>
             {!isScrolled && (

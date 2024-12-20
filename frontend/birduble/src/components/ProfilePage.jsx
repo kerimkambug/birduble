@@ -3,33 +3,31 @@ import axios from "axios";
 import "../styles/profile.css";
 
 function ProfilePage() {
-    const [user, setUser] = useState(null); // Kullanıcı bilgilerini saklayacağız
-    const [ingredientsData, setIngredientsData] = useState([]); // Malzeme verisini saklayacağız
-    const [error, setError] = useState(null); // Hata durumu
-    const [loading, setLoading] = useState(true); // Yükleniyor durumu
+    const [user, setUser] = useState(null);
+    const [ingredientsData, setIngredientsData] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
 
     useEffect(() => {
-        // API'ye Bearer token ile istek gönderiyoruz
         const fetchData = async () => {
             try {
-                const token = localStorage.getItem("token"); // Token'ı localStorage'dan alıyoruz
+                const token = localStorage.getItem("token");
                 if (!token) {
                     setError("Token bulunamadı. Lütfen giriş yapın.");
                     setLoading(false);
                     return;
                 }
 
-                // Kullanıcı profilini alıyoruz
-                const profileResponse = await axios.get("http://localhost:8080/api/auth/profile", {
+                const profileResponse = await axios.get(`${API_URL}/api/auth/profile`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                setUser(profileResponse.data.data); // Profil verisini state'e alıyoruz
+                setUser(profileResponse.data.data);
 
-                // Malzeme kategorileri verisini alıyoruz
-                const ingredientsResponse = await axios.get("http://localhost:8080/api/ingredient/getallingredients");
-                setIngredientsData(ingredientsResponse.data.data); // Tüm malzemelerin kategorilerini saklıyoruz
+                const ingredientsResponse = await axios.get(`${API_URL}/api/ingredient/getallingredients`);
+                setIngredientsData(ingredientsResponse.data.data);
 
                 setLoading(false);
             } catch (error) {
@@ -41,22 +39,18 @@ function ProfilePage() {
         fetchData();
     }, []);
 
-    // Yükleniyor durumu kontrolü
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    // Hata durumu kontrolü
     if (error) {
         return <div>Error: {error}</div>;
     }
 
-    // Kullanıcı verisi kontrolü
     if (!user) {
         return <div>Profil verisi bulunamadı.</div>;
     }
 
-    // Malzemeleri kategorize etme
     const categorizeIngredients = (userIngredients) => {
         const categorized = {
             alkol: [],
@@ -69,7 +63,6 @@ function ProfilePage() {
             diğer: [],
         };
 
-        // Kullanıcı malzemelerini kategorilere ayırıyoruz
         userIngredients.forEach((ingredient) => {
             const ingredientCategory = ingredientsData.find((item) => item.name === ingredient);
             const category = ingredientCategory ? ingredientCategory.category : "diğer";
@@ -91,13 +84,11 @@ function ProfilePage() {
                 <p><strong>Rol:</strong> {user?.role || "Rol bilgisi yok"}</p>
 
                 <p><strong>Malzemeler:</strong></p>
-                {/* Kategorilere ayrılmış malzemeleri göster */}
                 {Object.keys(categorizedIngredients).map((category) =>
                     categorizedIngredients[category].length > 0 ? (
                         <div key={category} className="ingredient-category">
                             <h3>{category.charAt(0).toUpperCase() + category.slice(1)}</h3>
                             <ul className="ingredient-list">
-                                {/* Aynı kategoriye ait tüm malzemeleri burada listele */}
                                 {categorizedIngredients[category].map((ingredient, index) => (
                                     <li key={index} className="ingredient-item">
                                         {ingredient}
@@ -108,7 +99,6 @@ function ProfilePage() {
                     ) : null
                 )}
             </div>
-
         </div>
     );
 }

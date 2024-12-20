@@ -4,26 +4,25 @@ import "../styles/addcocktail.css";
 
 function AddCocktail() {
     const [cocktailName, setCocktailName] = useState("");
-    const [ingredients, setIngredients] = useState([]); // Will hold ingredients with amount
+    const [ingredients, setIngredients] = useState([]);
     const [newIngredient, setNewIngredient] = useState({ name: "", category: "" });
     const [recipe, setRecipe] = useState("");
     const [allIngredients, setAllIngredients] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [error, setError] = useState("");
-    const [amount, setAmount] = useState(""); // Amount for selected ingredient
-    const [selectedIngredient, setSelectedIngredient] = useState(null); // To hold the selected ingredient
+    const [amount, setAmount] = useState("");
+    const [selectedIngredient, setSelectedIngredient] = useState(null);
 
-    // Ingredient categories
     const ingredientCategories = [
         "alkol", "sebze", "soft", "baharat", "meyve", "şurup", "sos", "diğer"
     ];
 
-    // Fetching ingredients from the database
     useEffect(() => {
         const fetchIngredients = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/api/ingredient/getallingredients");
-                setAllIngredients(response.data.data); // Assuming the response contains a `data` field with ingredient list
+                const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
+                const response = await axios.get(`${API_URL}/api/ingredient/getallingredients`);
+                setAllIngredients(response.data.data);
             } catch (error) {
                 console.error("Error fetching ingredients:", error);
                 setError("Failed to fetch ingredients.");
@@ -32,10 +31,9 @@ function AddCocktail() {
         fetchIngredients();
     }, []);
 
-    // Handle ingredient selection and amount input
     const handleIngredientAmountChange = (ingredientName, enteredAmount) => {
-        setAmount(enteredAmount); // Update amount for the selected ingredient
-        setSelectedIngredient(ingredientName); // Set the selected ingredient
+        setAmount(enteredAmount);
+        setSelectedIngredient(ingredientName);
     };
 
     const addIngredientToList = () => {
@@ -44,17 +42,15 @@ function AddCocktail() {
                 ...prev,
                 { ingredient: selectedIngredient, amount },
             ]);
-            setAmount(""); // Clear amount input after adding
-            setSelectedIngredient(null); // Clear selected ingredient
+            setAmount("");
+            setSelectedIngredient(null);
         } else {
             setError("Please select an ingredient and enter an amount.");
         }
     };
 
-    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!cocktailName || ingredients.length === 0 || !recipe) {
             setError("Please fill out all fields.");
             return;
@@ -63,37 +59,33 @@ function AddCocktail() {
         try {
             const cocktailData = {
                 name: cocktailName,
-                ingredients: ingredients, // ingredients is now an array of { ingredient, amount }
+                ingredients: ingredients,
                 recipe: recipe,
             };
 
-            const response = await axios.post("http://localhost:8080/api/cocktail/addcocktail", cocktailData);
+            const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
+            const response = await axios.post(`${API_URL}/api/cocktail/addcocktail`, cocktailData);
             console.log("Cocktail added:", response.data);
-            // Reset form after successful submission
             setCocktailName("");
             setIngredients([]);
             setRecipe("");
             setSearchTerm("");
-            setAmount(""); // Reset amount field
+            setAmount("");
         } catch (error) {
             console.error("Error adding cocktail:", error);
             setError("Failed to add cocktail.");
         }
     };
 
-    // Filter ingredients based on the search term
     const filteredIngredients = allIngredients.filter((ingredient) =>
         ingredient.name && ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
-
     );
-
 
     return (
         <div className="add-cocktail">
             <h2>Add a New Cocktail</h2>
             {error && <div className="error">{error}</div>}
             <form onSubmit={handleSubmit}>
-                {/* Cocktail Name */}
                 <div className="input-group">
                     <label>Cocktail Name:</label>
                     <input
@@ -104,7 +96,6 @@ function AddCocktail() {
                     />
                 </div>
 
-                {/* Ingredient Search and Amount Input */}
                 <div className="input-group">
                     <label>Search Ingredients:</label>
                     <input
@@ -118,16 +109,13 @@ function AddCocktail() {
                             <div
                                 key={ingredient._id}
                                 className={`ingredient-item ${selectedIngredient === ingredient.name ? "selected" : ""}`}
-                                onClick={() => {
-                                    setSelectedIngredient(ingredient.name); // Set the selected ingredient
-                                }}
+                                onClick={() => setSelectedIngredient(ingredient.name)}
                             >
                                 {ingredient.name}
                             </div>
                         ))}
                     </div>
 
-                    {/* Amount Input for the selected ingredient */}
                     {selectedIngredient && (
                         <div className="amount-input">
                             <label>Amount:</label>
@@ -135,7 +123,7 @@ function AddCocktail() {
                                 type="text"
                                 placeholder="Enter amount (e.g., 40 ml)"
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)} // Allow user to edit amount
+                                onChange={(e) => setAmount(e.target.value)}
                             />
                             <button
                                 type="button"
@@ -147,7 +135,6 @@ function AddCocktail() {
                     )}
                 </div>
 
-                {/* Added Ingredients Preview */}
                 <div className="added-ingredients">
                     <h3>Added Ingredients:</h3>
                     <ul>
@@ -159,7 +146,6 @@ function AddCocktail() {
                     </ul>
                 </div>
 
-                {/* Add New Ingredient Section */}
                 <div className="new-ingredient">
                     <h3>Or Add New Ingredient</h3>
                     <input
@@ -185,11 +171,11 @@ function AddCocktail() {
                         type="button"
                         onClick={async () => {
                             try {
+                                const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
                                 const response = await axios.post(
-                                    "http://localhost:8080/api/ingredient/addingredient",
+                                    `${API_URL}/api/ingredient/addingredient`,
                                     newIngredient
                                 );
-                                console.log("New ingredient added:", response.data);
                                 setAllIngredients((prev) => [...prev, response.data]);
                                 setNewIngredient({ name: "", category: "" });
                             } catch (error) {
@@ -202,7 +188,6 @@ function AddCocktail() {
                     </button>
                 </div>
 
-                {/* Recipe */}
                 <div className="input-group">
                     <label>Recipe:</label>
                     <textarea
@@ -213,7 +198,6 @@ function AddCocktail() {
                     />
                 </div>
 
-                {/* Submit Button */}
                 <button type="submit">Save Cocktail</button>
             </form>
         </div>
