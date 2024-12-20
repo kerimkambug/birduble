@@ -7,7 +7,7 @@ function ProfilePage() {
     const [ingredientsData, setIngredientsData] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
+    const API_URL = "https://mighty-island-53325-296dd28c851f.herokuapp.com";
 
     useEffect(() => {
         const fetchData = async () => {

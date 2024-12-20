@@ -9,7 +9,7 @@ import AddCocktail from "./components/addCocktail";
 import Cocktail from "./components/cocktail";
 import AvailableCocktails from "./components/availablecocktails";
 import LoginRequired from "./components/LoginRequired"; // LoginRequired bileşeni
-const API_URL = "http://mighty-island-53325-296dd28c851f.herokuapp.com"
+const API_URL = "https://mighty-island-53325-296dd28c851f.herokuapp.com"
 
 function App() {
   const [malzemeler, setMalzemeler] = useState([]);

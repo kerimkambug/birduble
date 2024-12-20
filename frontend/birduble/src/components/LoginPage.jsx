@@ -15,7 +15,7 @@ function LoginPage({ setCurrentPage }) {
             return;
         }
 
-        const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
+        const API_URL = "https://mighty-island-53325-296dd28c851f.herokuapp.com";
 
         fetch(`${API_URL}/api/auth/login`, {
             method: "POST",

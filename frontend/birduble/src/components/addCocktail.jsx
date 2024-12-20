@@ -63,7 +63,7 @@ function AddCocktail() {
                 recipe: recipe,
             };
 
-            const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
+            const API_URL = "https://mighty-island-53325-296dd28c851f.herokuapp.com";
             const response = await axios.post(`${API_URL}/api/cocktail/addcocktail`, cocktailData);
             console.log("Cocktail added:", response.data);
             setCocktailName("");
@@ -171,7 +171,7 @@ function AddCocktail() {
                         type="button"
                         onClick={async () => {
                             try {
-                                const API_URL = process.env.REACT_APP_API_URL || "https://mighty-island-53325-296dd28c851f.herokuapp.com";
+                                const API_URL = "https://mighty-island-53325-296dd28c851f.herokuapp.com";
                                 const response = await axios.post(
                                     `${API_URL}/api/ingredient/addingredient`,
                                     newIngredient
