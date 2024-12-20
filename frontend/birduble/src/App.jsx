@@ -76,7 +76,12 @@ function App() {
       if (!token) throw new Error("Token bulunamadı.");
 
       await axios.put(
-        "http://localhost:8080/api/auth/updateprofile",
+        `${API_URL}/api/auth/updateprofile`
+
+
+
+
+        ,
         { ingredients: updatedIngredients },
         { headers: { Authorization: `Bearer ${token}` } }
       );
