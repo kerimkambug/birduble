@@ -184,7 +184,6 @@ function App() {
     } else if (currentPage === "profile") {
       return (
         <>
-          <AddCocktail />
           <Navbar />
           {loading ? (
             <div>Loading...</div>
@@ -194,6 +193,8 @@ function App() {
             <ProfilePage />
           )}
           <Footer />
+          <AddCocktail />
+
         </>
       );
     }
