@@ -1,10 +1,10 @@
 import React from "react";
 
-const LoginRequired = () => {
-    return (
-        <div
+const LoginRequired = ({ message }) => {
+    if (message == "Veri çekilirken bir hata oluştu.") {
+        return <div
             style={{
-                backgroundColor: "rgba(0, 0, 0, 0.7)",
+                backgroundColor: "rgba(211, 24, 24, 0.7)",
                 color: "white",
                 padding: "20px",
                 textAlign: "center",
@@ -18,18 +18,29 @@ const LoginRequired = () => {
                 maxWidth: "400px",
             }}
         >
-            <h2>Giriş Yapılmadı!</h2>
-            <p>Bu sayfayı görüntülemek için giriş yapmanız gerekmektedir.</p>
-            <a
-                href="#login"
-                style={{
-                    color: "#4CAF50",
-                    textDecoration: "none",
-                    fontWeight: "bold",
-                }}
-            >
-                Giriş Yap
-            </a>
+            <h2>Giriş yapılamadı</h2>
+
+        </div>
+    }
+    return (
+        <div
+            style={{
+                backgroundColor: "rgba(211, 24, 24, 0.7)",
+                color: "white",
+                padding: "20px",
+                textAlign: "center",
+                borderRadius: "10px",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                zIndex: "1000",
+                width: "80%",
+                maxWidth: "400px",
+            }}
+        >
+            <h2>{message}</h2>
+
         </div>
     );
 };

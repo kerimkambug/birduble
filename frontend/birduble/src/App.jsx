@@ -193,7 +193,6 @@ function App() {
             <ProfilePage />
           )}
           <Footer />
-          <AddCocktail />
 
         </>
       );
@@ -206,7 +205,7 @@ function App() {
           {loading ? (
             <div>Loading...</div>
           ) : error ? (
-            <LoginRequired message={error} />
+            <LoginRequired message="Hazırlanabilir kokteyller listesi boş." />
           ) : !availablecocktails.length ? (
             <LoginRequired message="Hazırlanabilir kokteyller listesi boş." />
           ) : (
